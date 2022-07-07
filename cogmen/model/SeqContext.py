@@ -20,52 +20,22 @@ class SeqContext(nn.Module):
                 self.nhead = h
                 break
 
-        self.encoding_layer = nn.Embedding(110, self.input_size)
-        self.LayerNorm = nn.LayerNorm(self.input_size)
-
-        if args.log_in_comet and not args.tuning:
-            args.experiment.log_parameter(
-                "input_feature_dims", self.input_size, step=None
-            )
-            args.experiment.log_parameter("nheads_in_SeqContext", self.nhead, step=None)
-
         self.use_transformer = False
-        if args.rnn == "lstm":
-            print("SeqContext-> USING LSTM")
-            self.rnn = nn.LSTM(
-                self.input_size,
-                self.hidden_dim // 2,
-                dropout=args.drop_rate,
-                bidirectional=True,
-                num_layers=args.seqcontext_nlayer,
-                batch_first=True,
-            )
-        elif args.rnn == "gru":
-            print("SeqContext-> USING GRU")
-            self.rnn = nn.GRU(
-                self.input_size,
-                self.hidden_dim // 2,
-                dropout=args.drop_rate,
-                bidirectional=True,
-                num_layers=args.seqcontext_nlayer,
-                batch_first=True,
-            )
-        elif args.rnn == "transformer":
-            print("SeqContext-> USING Transformer")
-            self.use_transformer = True
-            encoder_layer = torch.nn.TransformerEncoderLayer(
-                d_model=self.input_size,
-                nhead=self.nhead,
-                dropout=args.drop_rate,
-                batch_first=True,
-            )
-            self.transformer_encoder = torch.nn.TransformerEncoder(
-                encoder_layer, num_layers=args.seqcontext_nlayer
-            )
-            self.transformer_out = torch.nn.Linear(
-                self.input_size, self.hidden_dim, bias=True
-            )
-            print("args.drop_rate:", args.drop_rate)
+        print("SeqContext-> USING Transformer")
+        self.use_transformer = True
+        encoder_layer = torch.nn.TransformerEncoderLayer(
+            d_model=self.input_size,
+            nhead=self.nhead,
+            dropout=args.drop_rate,
+            batch_first=True,
+        )
+        self.transformer_encoder = torch.nn.TransformerEncoder(
+            encoder_layer, num_layers=args.seqcontext_nlayer
+        )
+        self.transformer_out = torch.nn.Linear(
+            self.input_size, self.hidden_dim, bias=True
+        )
+        print("args.drop_rate:", args.drop_rate)
 
     def forward(self, text_len_tensor, text_tensor):
         if self.use_transformer:

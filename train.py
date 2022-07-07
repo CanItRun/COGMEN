@@ -1,4 +1,4 @@
-from comet_ml import Experiment, Optimizer
+# from comet_ml import Experiment, Optimizer
 
 import argparse
 import torch
@@ -102,7 +102,6 @@ def main(args):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="train.py")
     parser.add_argument(
         "--dataset",
@@ -131,7 +130,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--model_ckpt", type=str, help="Training from a checkpoint.")
 
-    parser.add_argument("--device", type=str, default="cuda", help="Computing device.")
+    parser.add_argument("--device", type=str, default="cpu", help="Computing device.")
     parser.add_argument(
         "--epochs", default=1, type=int, help="Number of training epochs."
     )
@@ -286,15 +285,5 @@ if __name__ == "__main__":
     }
 
     log.debug(args)
-
-    # Create an experiment with your api key
-    if args.log_in_comet and not args.tuning:
-        experiment = Experiment(
-            api_key=args.comet_api_key,
-            project_name="hyperparam-mosei",
-            workspace=args.comet_workspace,
-        )
-        args.experiment = experiment
-        experiment.add_tag(args.tag)
 
     main(args)

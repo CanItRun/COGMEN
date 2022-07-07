@@ -53,12 +53,7 @@ class COGMEN(nn.Module):
 
         self.rnn = SeqContext(u_dim, g_dim, args)
         self.gcn = GNN(g_dim, h1_dim, h2_dim, args)
-        if args.concat_gin_gout:
-            self.clf = Classifier(
-                g_dim + h2_dim * args.gnn_nheads, hc_dim, tag_size, args
-            )
-        else:
-            self.clf = Classifier(h2_dim * args.gnn_nheads, hc_dim, tag_size, args)
+        self.clf = Classifier(h2_dim * args.gnn_nheads, hc_dim, tag_size, args)
 
         edge_type_to_idx = {}
         for j in range(args.n_speakers):
@@ -86,26 +81,14 @@ class COGMEN(nn.Module):
 
     def forward(self, data):
         graph_out, features = self.get_rep(data)
-        if self.concat_gin_gout:
-            out = self.clf(
-                torch.cat([features, graph_out], dim=-1), data["text_len_tensor"]
-            )
-        else:
-            out = self.clf(graph_out, data["text_len_tensor"])
+        out = self.clf(graph_out, data["text_len_tensor"])
 
         return out
 
     def get_loss(self, data):
         graph_out, features = self.get_rep(data)
-        if self.concat_gin_gout:
-            loss = self.clf.get_loss(
-                torch.cat([features, graph_out], dim=-1),
-                data["label_tensor"],
-                data["text_len_tensor"],
-            )
-        else:
-            loss = self.clf.get_loss(
-                graph_out, data["label_tensor"], data["text_len_tensor"]
-            )
+        loss = self.clf.get_loss(
+            graph_out, data["label_tensor"], data["text_len_tensor"]
+        )
 
         return loss

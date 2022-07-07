@@ -1,10 +1,14 @@
 import math
 import random
+from typing import List
+
 import torch
 
 import numpy as np
 
 from threading import current_thread
+
+from cogmen import Sample
 
 
 class Dataset:
@@ -27,11 +31,11 @@ class Dataset:
 
     def raw_batch(self, index):
         assert index < self.num_batches, "batch_idx %d > %d" % (index, self.num_batches)
-        batch = self.samples[index * self.batch_size : (index + 1) * self.batch_size]
+        batch = self.samples[index * self.batch_size: (index + 1) * self.batch_size]
 
         return batch
 
-    def padding(self, samples):
+    def padding(self, samples: List[Sample]):
         batch_size = len(samples)
         text_len_tensor = torch.tensor([len(s.text) for s in samples]).long()
         mx = torch.max(text_len_tensor).item()

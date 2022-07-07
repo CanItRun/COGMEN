@@ -10,7 +10,6 @@ import numpy as np
 
 import cogmen
 
-
 log = cogmen.utils.get_logger()
 
 
@@ -137,12 +136,12 @@ def get_iemocap_split(split_utterances):
             train.append(
                 cogmen.Sample(
                     vid,
-                    video_speakers[vid][split_i : split_i + split_utterances],
-                    video_labels[vid][split_i : split_i + split_utterances],
-                    video_text[vid][split_i : split_i + split_utterances],
-                    video_audio[vid][split_i : split_i + split_utterances],
-                    video_visual[vid][split_i : split_i + split_utterances],
-                    video_sentence[vid][split_i : split_i + split_utterances],
+                    video_speakers[vid][split_i: split_i + split_utterances],
+                    video_labels[vid][split_i: split_i + split_utterances],
+                    video_text[vid][split_i: split_i + split_utterances],
+                    video_audio[vid][split_i: split_i + split_utterances],
+                    video_visual[vid][split_i: split_i + split_utterances],
+                    video_sentence[vid][split_i: split_i + split_utterances],
                 )
             )
     for vid in tqdm(dev_vids, desc="dev"):
@@ -150,12 +149,12 @@ def get_iemocap_split(split_utterances):
             dev.append(
                 cogmen.Sample(
                     vid,
-                    video_speakers[vid][split_i : split_i + split_utterances],
-                    video_labels[vid][split_i : split_i + split_utterances],
-                    video_text[vid][split_i : split_i + split_utterances],
-                    video_audio[vid][split_i : split_i + split_utterances],
-                    video_visual[vid][split_i : split_i + split_utterances],
-                    video_sentence[vid][split_i : split_i + split_utterances],
+                    video_speakers[vid][split_i: split_i + split_utterances],
+                    video_labels[vid][split_i: split_i + split_utterances],
+                    video_text[vid][split_i: split_i + split_utterances],
+                    video_audio[vid][split_i: split_i + split_utterances],
+                    video_visual[vid][split_i: split_i + split_utterances],
+                    video_sentence[vid][split_i: split_i + split_utterances],
                 )
             )
     for vid in tqdm(test_vids, desc="test"):
@@ -163,12 +162,12 @@ def get_iemocap_split(split_utterances):
             test.append(
                 cogmen.Sample(
                     vid,
-                    video_speakers[vid][split_i : split_i + split_utterances],
-                    video_labels[vid][split_i : split_i + split_utterances],
-                    video_text[vid][split_i : split_i + split_utterances],
-                    video_audio[vid][split_i : split_i + split_utterances],
-                    video_visual[vid][split_i : split_i + split_utterances],
-                    video_sentence[vid][split_i : split_i + split_utterances],
+                    video_speakers[vid][split_i: split_i + split_utterances],
+                    video_labels[vid][split_i: split_i + split_utterances],
+                    video_text[vid][split_i: split_i + split_utterances],
+                    video_audio[vid][split_i: split_i + split_utterances],
+                    video_visual[vid][split_i: split_i + split_utterances],
+                    video_sentence[vid][split_i: split_i + split_utterances],
                 )
             )
     log.info("train vids:")
@@ -419,7 +418,6 @@ def get_mosei_from_tbje_emotion(args):
 
 
 def get_mosei():
-
     mosei_path = args.data_dir
     cogmen.utils.set_seed(args.seed)
 
@@ -548,7 +546,7 @@ if __name__ == "__main__":
         "--dataset",
         type=str,
         required=True,
-        choices=["iemocap", "iemocap_4", "mosei",],
+        choices=["iemocap", "iemocap_4", "mosei", ],
         help="Dataset name.",
     )
     parser.add_argument(

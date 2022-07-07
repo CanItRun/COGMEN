@@ -130,3 +130,5 @@ dmypy.json
 
 # others
 .DS_Store
+
+model_checkpoints

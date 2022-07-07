@@ -7,14 +7,16 @@ log = cogmen.utils.get_logger()
 
 
 def batch_graphify(features, lengths, speaker_tensor, wp, wf, edge_type_to_idx, device):
+    # 构建一个用邻接表表示的图
+
     node_features, edge_index, edge_type = [], [], []
     batch_size = features.size(0)
     length_sum = 0
-    edge_ind = []
-    edge_index_lengths = []
 
-    for j in range(batch_size):
-        edge_ind.append(edge_perms(lengths[j].cpu().item(), wp, wf))
+    # edge_ind = []
+    # for j in range(batch_size):
+    #     edge_ind.append(edge_perms(lengths[j].cpu().item(), wp, wf))
+    edge_index_lengths = []
 
     for j in range(batch_size):
         cur_len = lengths[j].item()
@@ -34,10 +36,10 @@ def batch_graphify(features, lengths, speaker_tensor, wp, wf, edge_type_to_idx, 
                 c = "1"
             edge_type.append(edge_type_to_idx[str(speaker1) + str(speaker2) + c])
 
-    node_features = torch.cat(node_features, dim=0).to(device)  # [E, D_g]
-    edge_index = torch.stack(edge_index).t().contiguous().to(device)  # [2, E]
-    edge_type = torch.tensor(edge_type).long().to(device)  # [E]
-    edge_index_lengths = torch.tensor(edge_index_lengths).long().to(device)  # [B]
+    node_features = torch.cat(node_features, dim=0).to(device)  # [E, D_g] # 图中每个节点的特征
+    edge_index = torch.stack(edge_index).t().contiguous().to(device)  # [2, sum(edge_index_lengths)] # 有序对表示的边
+    edge_type = torch.tensor(edge_type).long().to(device)  # [sum(edge_index_lengths)] # 每个边的类型
+    edge_index_lengths = torch.tensor(edge_index_lengths).long().to(device)  # [B] # 每个子图的位置
 
     return node_features, edge_index, edge_type, edge_index_lengths
 
@@ -58,11 +60,11 @@ def edge_perms(length, window_past, window_future):
         elif window_past == -1:  # use all past context
             eff_array = array[: min(length, j + window_future + 1)]
         elif window_future == -1:  # use all future context
-            eff_array = array[max(0, j - window_past) :]
+            eff_array = array[max(0, j - window_past):]
         else:
             eff_array = array[
-                max(0, j - window_past) : min(length, j + window_future + 1)
-            ]
+                        max(0, j - window_past): min(length, j + window_future + 1)
+                        ]
 
         for item in eff_array:
             perms.add((j, item))

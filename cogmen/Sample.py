@@ -1,6 +1,5 @@
 from sentence_transformers import SentenceTransformer
 
-
 sbert_model = SentenceTransformer("paraphrase-distilroberta-base-v1")
 
 
